@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASTON — Intelligence in Motion</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#090a0f',
+                            800: '#0f111a',
+                            700: '#161924',
+                            600: '#202433',
+                            500: '#2d3348',
+                        },
+                        flame: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            300: '#fdba74',
+                            500: '#ff6b00',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            amber: '#ffb703',
+                            red: '#d90429',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Marked for Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Highlight.js for Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Custom CSS Styles & Animations -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090a0f;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 17, 26, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 0, 0.3);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 0, 0.6);
+        }
+
+        /* Flame Glow Effects */
+        .flame-glow {
+            box-shadow: 0 0 25px -5px rgba(255, 107, 0, 0.35);
+        }
+        .flame-glow-lg {
+            box-shadow: 0 0 50px -10px rgba(255, 107, 0, 0.45);
+        }
+        .amber-glow {
+            box-shadow: 0 0 20px -5px rgba(255, 183, 3, 0.3);
+        }
+
+        /* Ember Particles Animation */
+        @keyframes floatEmber {
+            0% {
+                transform: translateY(0px) translateX(0px) scale(1);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-120px) translateX(25px) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        .ember {
+            position: absolute;
+            background: radial-gradient(circle, #fff7ed 0%, #ff6b00 60%, #d90429 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatEmber 3.5s ease-in-out infinite;
+        }
+
+        /* Pulsing Audio Wave Animation for Voice Mode */
+        @keyframes soundWave {
+            0%, 100% { height: 12px; }
+            50% { height: 48px; }
+        }
+        .wave-bar {
+            width: 6px;
+            background: linear-gradient(180deg, #ffb703 0%, #ff6b00 50%, #d90429 100%);
+            border-radius: 9999px;
+            animation: soundWave 1.2s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.4s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.15s; }
+
+        /* Splash Screen Fade Out */
+        @keyframes fadeOutSplash {
+            0% { opacity: 1; visibility: visible; }
+            80% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        .splash-exit {
+            animation: fadeOutSplash 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .prose pre {
+            background-color: #0f111a !important;
+            border: 1px solid #202433;
+            border-radius: 0.75rem;
+        }
+        .prose code {
+            color: #fdba74;
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100 antialiased selection:bg-flame-500 selection:text-white">
+
+    <!-- 3-Second Fire Splash Screen -->
+    <div id="splash-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-dark-900 transition-opacity duration-700">
+        <!-- Floating Embers Container -->
+        <div id="splash-embers" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+        <!-- Central Flame Glow & Monogram -->
+        <div class="relative z-10 flex flex-col items-center">
+            <div class="absolute -inset-10 bg-gradient-to-r from-flame-500/20 via-flame-amber/20 to-flame-red/20 rounded-full blur-2xl animate-pulse"></div>
+            
+            <div class="relative w-24 h-24 mb-6 rounded-2xl bg-gradient-to-br from-dark-800 to-dark-700 border border-flame-500/40 flame-glow-lg flex items-center justify-center transform hover:scale-105 transition-transform duration-500">
+                <svg class="w-14 h-14 text-flame-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C12 2 15 7 17 10C19.5 13.8 19 18 16 20.5C13 23 8 22 6 18C4 14 7 10 12 2Z" fill="url(#flameGrad)" fill-opacity="0.2"/>
+                    <path d="M12 2L6 20M12 2L18 20M8 14H16" stroke="url(#flameGrad)" stroke-width="2.5"/>
+                    <defs>
+                        <linearGradient id="flameGrad" x1="6" y1="2" x2="18" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#ffb703"/>
+                            <stop offset="0.5" stop-color="#ff6b00"/>
+                            <stop offset="1" stop-color="#d90429"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-wider font-display mb-3">
+                AST<span class="text-flame-500">O</span>N
+            </h1>
+            
+            <p id="splash-tagline" class="text-sm md:text-base text-gray-400 font-medium tracking-widest uppercase opacity-0 transform translate-y-2 transition-all duration-700">
+                Intelligence in Motion
+            </p>
+        </div>
+
+        <div class="absolute bottom-8 flex flex-col items-center space-y-1 text-xs text-gray-500 font-mono">
+            <span>v1.0 • Secure AI Studio</span>
+            <span class="text-flame-500 font-medium">created by Patrick Chidiebere David</span>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app" class="flex h-screen w-screen overflow-hidden opacity-0 transition-opacity duration-700">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-dark-800 border-r border-dark-600 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none">
+            <!-- Sidebar Header -->
+            <div class="p-4 border-b border-dark-600 flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('chat')">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-flame-500 to-flame-red flex items-center justify-center flame-glow shadow-md">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 2L6 20M12 2L18 20M8 14H16"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold font-display tracking-wide">ASTON</span>
+                        <span class="block text-[10px] text-flame-500 font-mono font-semibold tracking-widest uppercase">Intelligence in Motion</span>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-dark-700">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- New Chat Button -->
+            <div class="p-4">
+                <button onclick="startNewChat()" class="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gradient-to-r from-flame-600 to-flame-500 hover:from-flame-500 hover:to-flame-600 text-white font-medium rounded-xl flame-glow transition-all duration-200 transform active:scale-98 shadow-lg">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    <span>New Conversation</span>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="px-3 py-2 space-y-1">
+                <button onclick="switchView('chat')" id="nav-chat" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors bg-dark-700 text-white">
+                    <i data-lucide="message-square" class="w-4 h-4 text-flame-500"></i>
+                    <span>Chat Assistant</span>
+                </button>
+                <button onclick="switchView('research')" id="nav-research" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-dark-700/50">
+                    <i data-lucide="globe" class="w-4 h-4 text-flame-amber"></i>
+                    <span>Deep Research</span>
+                </button>
+                <button onclick="switchView('image-studio')" id="nav-image" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-dark-700/50">
+                    <i data-lucide="image" class="w-4 h-4 text-purple-400"></i>
+                    <span>Create Image</span>
+                </button>
+                <button onclick="switchView('video-studio')" id="nav-video" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-dark-700/50">
+                    <i data-lucide="video" class="w-4 h-4 text-cyan-400"></i>
+                    <span>Create Video</span>
+                </button>
+            </div>
+
+            <!-- Recent Conversations List -->
+            <div class="flex-1 overflow-y-auto px-3 py-2">
+                <div class="px-3 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center justify-between">
+                    <span>Recent Chats</span>
+                    <span id="chat-count" class="text-[10px] bg-dark-700 px-1.5 py-0.5 rounded text-gray-400">0</span>
+                </div>
+                <div id="recent-chats-list" class="mt-1 space-y-1"></div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-3 border-t border-dark-600 space-y-2">
+                <button onclick="openSettings()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-dark-700/50 transition-colors">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>Settings & Cloudflare Key</span>
+                </button>
+
+                <div id="user-profile-section" class="flex items-center justify-between p-2 rounded-xl bg-dark-700/60 border border-dark-600">
+                    <div class="flex items-center space-x-2.5 overflow-hidden">
+                        <div id="user-avatar" class="w-8 h-8 rounded-full bg-flame-500/20 border border-flame-500 flex items-center justify-center text-flame-500 font-bold text-xs">
+                            A
+                        </div>
+                        <div class="overflow-hidden">
+                            <p id="user-name" class="text-xs font-medium text-gray-200 truncate">Guest User</p>
+                            <p id="user-status" class="text-[10px] text-gray-400 truncate">Local Session</p>
+                        </div>
+                    </div>
+                    <button onclick="handleAuthAction()" id="auth-action-btn" class="p-1.5 text-gray-400 hover:text-flame-500 rounded-lg hover:bg-dark-600 transition-colors" title="Google Sign In">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Backdrop for mobile sidebar -->
+        <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col h-full lg:pl-72 relative bg-dark-900 overflow-hidden">
+            
+            <!-- Top Navbar -->
+            <header class="sticky top-0 z-30 h-16 border-b border-dark-600 bg-dark-800/90 backdrop-blur-md px-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()" class="p-2 text-flame-500 hover:text-white rounded-xl bg-dark-700/80 border border-flame-500/30 hover:bg-flame-500/20 transition-all shadow-sm" title="Toggle Navigation Menu">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <span id="current-view-title" class="text-base font-semibold font-display tracking-wide">Chat Assistant</span>
+                        <span id="model-badge" class="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded-full bg-dark-700 border border-dark-600 text-gray-400">OpenRouter • Claude 3.5 Sonnet</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <button onclick="openLiveVoiceMode()" class="flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-flame-600 to-flame-amber hover:from-flame-amber hover:to-flame-600 text-white rounded-xl text-xs font-bold flame-glow transition-all">
+                        <i data-lucide="mic" class="w-4 h-4 animate-pulse"></i>
+                        <span>ASTON Live Voice</span>
+                    </button>
+                    <button onclick="openDeployGuide()" class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-dark-700 hover:bg-dark-600 text-xs font-medium border border-dark-600 text-gray-300 transition-colors">
+                        <i data-lucide="cloud" class="w-3.5 h-3.5 text-flame-500"></i>
+                        <span>Deployment</span>
+                    </button>
+                    <button onclick="openSettings()" class="p-2 text-gray-400 hover:text-white rounded-xl hover:bg-dark-700 transition-colors" title="Settings">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div id="views-container" class="flex-1 relative overflow-hidden flex flex-col">
+                
+                <!-- 1. CHAT VIEW -->
+                <div id="view-chat" class="view-panel absolute inset-0 flex flex-col">
+                    <div id="chat-scroll-area" class="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+                        <!-- Welcome Screen -->
+                        <div id="welcome-screen" class="max-w-3xl mx-auto my-auto py-12 text-center space-y-8">
+                            <div class="inline-flex p-4 rounded-3xl bg-gradient-to-br from-dark-800 to-dark-700 border border-flame-500/30 flame-glow mb-2">
+                                <svg class="w-12 h-12 text-flame-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2L6 20M12 2L18 20M8 14H16"/>
+                                </svg>
+                            </div>
+                            <div class="space-y-3">
+                                <h2 class="text-3xl md:text-4xl font-extrabold font-display tracking-tight">Welcome to ASTON</h2>
+                                <p class="text-xl text-gray-300 font-medium">What are we exploring today?</p>
+                                <p class="text-sm text-gray-400 max-w-md mx-auto">Ask questions, generate videos via Cloudflare Workers AI, and talk live in conversational Voice Mode.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto pt-4">
+                                <div onclick="selectFeatureCard('chat', 'Explain how AI agents work and give a practical example.')" class="p-4 rounded-2xl bg-dark-800/80 border border-dark-600 hover:border-flame-500/50 cursor-pointer transition-all hover:-translate-y-0.5 group">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="p-2 rounded-xl bg-flame-500/10 text-flame-500 group-hover:bg-flame-500 group-hover:text-white transition-colors">
+                                            <i data-lucide="message-square" class="w-5 h-5"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-sm">Ask ASTON</h3>
+                                    </div>
+                                    <p class="text-xs text-gray-400">Get help with questions, coding, learning, writing, and problem-solving.</p>
+                                </div>
+
+                                <div onclick="selectFeatureCard('research', 'Research the latest breakthroughs in renewable energy storage in 2026.')" class="p-4 rounded-2xl bg-dark-800/80 border border-dark-600 hover:border-flame-amber/50 cursor-pointer transition-all hover:-translate-y-0.5 group">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="p-2 rounded-xl bg-flame-amber/10 text-flame-amber group-hover:bg-flame-amber group-hover:text-dark-900 transition-colors">
+                                            <i data-lucide="globe" class="w-5 h-5"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-sm">Deep Research</h3>
+                                    </div>
+                                    <p class="text-xs text-gray-400">Investigate topics using real web sources and cited evidence.</p>
+                                </div>
+
+                                <div onclick="selectFeatureCard('image', 'A cinematic futuristic city at sunset with flying vehicles and lush greenery, cyberpunk style')" class="p-4 rounded-2xl bg-dark-800/80 border border-dark-600 hover:border-purple-500/50 cursor-pointer transition-all hover:-translate-y-0.5 group">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="p-2 rounded-xl bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                            <i data-lucide="image" class="w-5 h-5"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-sm">Create Image</h3>
+                                    </div>
+                                    <p class="text-xs text-gray-400">Turn descriptions and ideas into high-definition images.</p>
+                                </div>
+
+                                <div onclick="selectFeatureCard('video', 'A drone shot over a glowing futuristic neon metropolis at night')" class="p-4 rounded-2xl bg-dark-800/80 border border-dark-600 hover:border-cyan-500/50 cursor-pointer transition-all hover:-translate-y-0.5 group">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:text-dark-900 transition-colors">
+                                            <i data-lucide="video" class="w-5 h-5"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-sm">Create Video</h3>
+                                    </div>
+                                    <p class="text-xs text-gray-400">Generate high-definition AI videos powered by Cloudflare Workers.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Chat Messages Container -->
+                        <div id="messages-list" class="max-w-3xl mx-auto space-y-6 pb-4"></div>
+                    </div>
+
+                    <!-- Chat Composer Bar -->
+                    <div class="p-4 bg-dark-900 border-t border-dark-600">
+                        <div class="max-w-3xl mx-auto bg-dark-800 border border-dark-600 rounded-2xl shadow-xl p-3 focus-within:border-flame-500 transition-colors">
+                            <div id="file-preview-container" class="flex flex-wrap gap-2 mb-2 hidden"></div>
+                            
+                            <input type="file" id="file-upload-input" class="hidden" multiple accept="image/*,.pdf,.txt,.json,.js,.py,.html,.css" onchange="handleFileSelected(event)">
+
+                            <textarea id="chat-input" rows="1" placeholder="Ask ASTON anything or tap the microphone to talk live..." class="w-full bg-transparent text-gray-100 placeholder-gray-500 text-sm focus:outline-none resize-none max-h-32" oninput="autoResizeTextarea(this)" onkeydown="handleChatKeydown(event)"></textarea>
+                            
+                            <div class="flex items-center justify-between pt-2 mt-2 border-t border-dark-700">
+                                <div class="flex items-center space-x-2">
+                                    <select id="composer-mode" class="bg-dark-700 text-xs text-gray-300 font-medium px-2.5 py-1.5 rounded-lg border border-dark-600 focus:outline-none focus:border-flame-500">
+                                        <option value="chat">💬 Chat</option>
+                                        <option value="research">🌐 Deep Research</option>
+                                        <option value="image">🎨 Image Studio</option>
+                                        <option value="video">🎬 Video Studio</option>
+                                    </select>
+                                    <button onclick="triggerFileUpload()" class="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-dark-700 transition-colors" title="Attach file or image">
+                                        <i data-lucide="paperclip" class="w-4 h-4"></i>
+                                    </button>
+                                    
+                                    <!-- Microphone Button for ASTON Voice Mode -->
+                                    <button onclick="openLiveVoiceMode()" class="p-1.5 text-flame-amber hover:text-white rounded-lg bg-flame-amber/10 hover:bg-flame-amber/30 border border-flame-amber/30 transition-all" title="Talk Live to ASTON (Voice & Captions)">
+                                        <i data-lucide="mic" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center space-x-2">
+                                    <button id="stop-btn" onclick="stopGeneration()" class="hidden items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-medium transition-colors">
+                                        <i data-lucide="square" class="w-3.5 h-3.5"></i>
+                                        <span>Stop</span>
+                                    </button>
+                                    <button id="send-btn" onclick="sendMessage()" class="p-2 rounded-xl bg-flame-500 hover:bg-flame-600 text-white flame-glow transition-all transform active:scale-95 shadow-md">
+                                        <i data-lucide="send" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center text-[10px] text-gray-500 mt-2">ASTON can make mistakes. Verify important facts with Deep Research.</p>
+                    </div>
+                </div>
+
+                <!-- 2. DEEP RESEARCH VIEW -->
+                <div id="view-research" class="view-panel absolute inset-0 hidden flex flex-col p-4 md:p-8 overflow-y-auto">
+                    <div class="max-w-3xl mx-auto w-full space-y-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-3 rounded-2xl bg-flame-amber/10 border border-flame-amber/30 text-flame-amber">
+                                <i data-lucide="globe" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold font-display">Deep Research Studio</h2>
+                                <p class="text-sm text-gray-400">Perform comprehensive web investigation with live citations and source synthesis.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-dark-800 border border-dark-600 rounded-2xl p-6 space-y-4 shadow-xl">
+                            <label class="block text-sm font-semibold text-gray-200">Research Topic or Question</label>
+                            <textarea id="research-query-input" rows="3" placeholder="e.g., Analyze the latest advancements in solid-state battery technology and commercial timelines for 2026..." class="w-full bg-dark-700 border border-dark-600 rounded-xl p-3 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-flame-amber"></textarea>
+                            
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                                <select id="research-depth" class="bg-dark-700 text-xs text-gray-300 px-3 py-2 rounded-xl border border-dark-600 focus:outline-none w-full sm:w-auto">
+                                    <option value="standard">Quick Web Search</option>
+                                    <option value="deep">Deep Multi-Source Synthesis</option>
+                                </select>
+                                <button onclick="runDeepResearch()" class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-amber-600 to-flame-amber hover:from-flame-amber hover:to-amber-600 text-dark-900 font-bold text-sm rounded-xl amber-glow transition-all flex items-center justify-center space-x-2">
+                                    <i data-lucide="search" class="w-4 h-4"></i>
+                                    <span>Launch Research</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="research-results-container" class="space-y-6 hidden"></div>
+                    </div>
+                </div>
+
+                <!-- 3. IMAGE STUDIO VIEW -->
+                <div id="view-image-studio" class="view-panel absolute inset-0 hidden flex flex-col p-4 md:p-8 overflow-y-auto">
+                    <div class="max-w-4xl mx-auto w-full space-y-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
+                                <i data-lucide="image" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold font-display">Image Creation Studio</h2>
+                                <p class="text-sm text-gray-400">Powered by Cloudflare Workers AI & Pollinations state-of-the-art visual models.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-1 bg-dark-800 border border-dark-600 rounded-2xl p-5 space-y-4 shadow-xl">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-2">Prompt</label>
+                                    <textarea id="image-prompt" rows="4" placeholder="Describe the image you want to generate..." class="w-full bg-dark-700 border border-dark-600 rounded-xl p-3 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-purple-500"></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-2">Aspect Ratio</label>
+                                    <select id="image-aspect" class="w-full bg-dark-700 text-xs text-gray-300 p-2.5 rounded-xl border border-dark-600 focus:outline-none">
+                                        <option value="1:1">Square (1:1)</option>
+                                        <option value="16:9">Landscape (16:9)</option>
+                                        <option value="9:16">Portrait (9:16)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-2">Model Engine</label>
+                                    <select id="image-model" class="w-full bg-dark-700 text-xs text-gray-300 p-2.5 rounded-xl border border-dark-600 focus:outline-none">
+                                        <option value="cloudflare">Cloudflare Workers AI (Flux / SDXL)</option>
+                                        <option value="pollinations">Pollinations Turbo (Fallback)</option>
+                                    </select>
+                                </div>
+
+                                <button onclick="generateImage()" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                    <span>Generate Image</span>
+                                </button>
+                            </div>
+
+                            <div class="lg:col-span-2 bg-dark-800 border border-dark-600 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[400px] shadow-xl relative overflow-hidden">
+                                <div id="image-placeholder" class="text-center space-y-3">
+                                    <div class="w-16 h-16 rounded-2xl bg-dark-700 border border-dark-600 flex items-center justify-center mx-auto text-gray-500">
+                                        <i data-lucide="image" class="w-8 h-8"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-400">Your generated image will appear here</p>
+                                </div>
+
+                                <div id="image-loading" class="hidden flex flex-col items-center space-y-4">
+                                    <div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <p class="text-sm text-purple-400 font-medium">Creating your artwork...</p>
+                                </div>
+
+                                <div id="image-result-container" class="hidden w-full h-full flex flex-col items-center space-y-4">
+                                    <img id="generated-image-output" src="" alt="Generated Artwork" class="max-h-[360px] rounded-xl border border-dark-600 shadow-2xl object-contain">
+                                    <div class="flex items-center space-x-3">
+                                        <a id="download-image-btn" href="#" download="aston-art.png" class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-xs font-semibold rounded-xl border border-dark-600 flex items-center space-x-1.5 transition-colors">
+                                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                            <span>Download</span>
+                                        </a>
+                                        <button onclick="generateImage()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-xs font-semibold rounded-xl text-white transition-colors">
+                                            Regenerate
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. VIDEO MOTION STUDIO VIEW -->
+                <div id="view-video-studio" class="view-panel absolute inset-0 hidden flex flex-col p-4 md:p-8 overflow-y-auto">
+                    <div class="max-w-4xl mx-auto w-full space-y-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                                <i data-lucide="video" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold font-display">Video Motion Studio</h2>
+                                <p class="text-sm text-gray-400">Generate high-definition AI videos via Cloudflare Workers AI pipeline.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-1 bg-dark-800 border border-dark-600 rounded-2xl p-5 space-y-4 shadow-xl">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-2">Video Prompt</label>
+                                    <textarea id="video-prompt" rows="4" placeholder="Describe the video motion, camera angle, lighting, and subject..." class="w-full bg-dark-700 border border-dark-600 rounded-xl p-3 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-500"></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-2">Aspect Ratio</label>
+                                    <select id="video-aspect" class="w-full bg-dark-700 text-xs text-gray-300 p-2.5 rounded-xl border border-dark-600 focus:outline-none">
+                                        <option value="16:9">Landscape (16:9)</option>
+                                        <option value="9:16">Vertical / Shorts (9:16)</option>
+                                        <option value="1:1">Square (1:1)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-2">Model Engine</label>
+                                    <select id="video-engine" class="w-full bg-dark-700 text-xs text-gray-300 p-2.5 rounded-xl border border-dark-600 focus:outline-none">
+                                        <option value="cloudflare-video">Cloudflare Workers AI (Text-to-Video API)</option>
+                                        <option value="pollinations-video">Pollinations Motion Engine (Fallback)</option>
+                                    </select>
+                                </div>
+
+                                <button onclick="generateVideo()" class="w-full py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                                    <i data-lucide="film" class="w-4 h-4"></i>
+                                    <span>Render Video</span>
+                                </button>
+                            </div>
+
+                            <div class="lg:col-span-2 bg-dark-800 border border-dark-600 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[400px] shadow-xl relative overflow-hidden">
+                                <div id="video-placeholder" class="text-center space-y-3">
+                                    <div class="w-16 h-16 rounded-2xl bg-dark-700 border border-dark-600 flex items-center justify-center mx-auto text-gray-500">
+                                        <i data-lucide="video" class="w-8 h-8"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-400">Your generated video will render here</p>
+                                </div>
+
+                                <div id="video-loading" class="hidden flex flex-col items-center space-y-4">
+                                    <div class="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <p class="text-sm text-cyan-400 font-medium">Synthesizing frames & video stream via Cloudflare...</p>
+                                </div>
+
+                                <div id="video-result-container" class="hidden w-full h-full flex flex-col items-center space-y-4">
+                                    <video id="generated-video-output" controls autoplay loop class="max-h-[360px] w-full rounded-xl border border-dark-600 shadow-2xl bg-black">
+                                        <source id="video-source" src="" type="video/mp4">
+                                        Your browser does not support video playback.
+                                    </video>
+                                    <div class="flex items-center space-x-3">
+                                        <a id="download-video-btn" href="#" download="aston-video.mp4" class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-xs font-semibold rounded-xl border border-dark-600 flex items-center space-x-1.5 transition-colors">
+                                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                            <span>Download Video</span>
+                                        </a>
+                                        <button onclick="generateVideo()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-xs font-semibold rounded-xl text-white transition-colors">
+                                            Re-render
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- FULLSCREEN LIVE VOICE MODE OVERLAY (Enhanced with Fallback Input & Robust Error Handling) -->
+    <div id="live-voice-overlay" class="fixed inset-0 z-50 bg-dark-900/95 backdrop-blur-2xl hidden flex flex-col items-center justify-between p-6 transition-all duration-500">
+        <!-- Live Voice Header -->
+        <div class="w-full max-w-2xl flex items-center justify-between pt-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-flame-500 to-flame-amber flex items-center justify-center flame-glow">
+                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 2L6 20M12 2L18 20M8 14H16"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold font-display tracking-wide">ASTON Live</h3>
+                    <p class="text-xs text-flame-500 font-mono">Real-time Conversational Voice Mode</p>
+                </div>
+            </div>
+            <button onclick="closeLiveVoiceMode()" class="p-2.5 text-gray-400 hover:text-white rounded-2xl bg-dark-800 border border-dark-600 hover:bg-dark-700 transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Animated Flame Core & Audio Visualizer -->
+        <div class="flex flex-col items-center justify-center space-y-6 my-auto text-center w-full max-w-xl">
+            <div class="relative flex items-center justify-center">
+                <div id="voice-glow-orb" class="absolute -inset-12 bg-gradient-to-r from-flame-500 via-flame-amber to-flame-red rounded-full blur-3xl opacity-40 animate-pulse"></div>
+                <div class="relative w-36 h-36 rounded-full bg-gradient-to-br from-dark-800 to-dark-700 border-2 border-flame-500/50 flame-glow-lg flex items-center justify-center">
+                    <div id="wave-bars-container" class="flex items-center space-x-2 h-16">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice Status Indicator -->
+            <div class="space-y-1">
+                <p id="voice-status-text" class="text-base font-semibold text-flame-amber font-mono">Listening... Speak now or type below</p>
+            </div>
+
+            <!-- Live Captions Display Box -->
+            <div class="w-full bg-dark-800/90 border border-dark-600 rounded-2xl p-5 shadow-2xl space-y-4 text-left backdrop-blur-md">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">You Said (Live Transcriptions / Input)</span>
+                    <p id="user-caption-text" class="text-sm font-medium text-white italic mt-1 min-h-[24px]">"Listening to your voice..."</p>
+                </div>
+                <div class="border-t border-dark-700 pt-3">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-flame-500">ASTON Response (Spoken Out Loud)</span>
+                    <p id="aston-caption-text" class="text-sm text-gray-200 mt-1 min-h-[40px]">ASTON is ready to converse...</p>
+                </div>
+            </div>
+
+            <!-- Fallback Voice Input Bar (Ensures Live Chat works on all browsers like Firefox / Safari / Mobile) -->
+            <div class="w-full flex items-center space-x-2 bg-dark-800 border border-dark-600 rounded-xl p-2 shadow-lg">
+                <input type="text" id="voice-fallback-input" placeholder="Type what you want to say to ASTON Live..." class="flex-1 bg-transparent text-xs text-gray-100 placeholder-gray-500 px-2 focus:outline-none" onkeydown="if(event.key==='Enter') sendVoiceFallbackText()">
+                <button onclick="sendVoiceFallbackText()" class="px-3 py-1.5 bg-flame-500 hover:bg-flame-600 text-white rounded-lg text-xs font-bold transition-colors">
+                    Send Voice Query
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Controls Footer -->
+        <div class="w-full max-w-md flex items-center justify-center space-x-6 pb-4">
+            <button id="toggle-mic-btn" onclick="toggleVoiceListening()" class="p-4 rounded-full bg-flame-500 hover:bg-flame-600 text-white flame-glow transition-all transform active:scale-95" title="Restart Microphone">
+                <i id="mic-icon" data-lucide="mic" class="w-6 h-6"></i>
+            </button>
+            <button onclick="closeLiveVoiceMode()" class="p-4 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-all" title="End Live Session">
+                <i data-lucide="phone-off" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-dark-800 border border-dark-600 rounded-3xl max-w-lg w-full p-6 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-dark-700 pb-4">
+                <h3 class="text-xl font-bold font-display flex items-center space-x-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-flame-500"></i>
+                    <span>ASTON Settings</span>
+                </h3>
+                <button onclick="closeSettings()" class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-dark-700">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">OpenRouter API Key</label>
+                    <input type="password" id="settings-api-key" placeholder="sk-or-v1-..." class="w-full bg-dark-700 border border-dark-600 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-flame-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Cloudflare Worker Endpoint & API Key</label>
+                    <div class="space-y-2">
+                        <input type="text" id="settings-cf-worker-url" placeholder="https://your-worker.your-subdomain.workers.dev" class="w-full bg-dark-700 border border-dark-600 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-flame-500">
+                        <input type="password" id="settings-cf-key" placeholder="Cloudflare API Token / Worker Key" class="w-full bg-dark-700 border border-dark-600 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-flame-500">
+                    </div>
+                    <p class="text-[11px] text-gray-400 mt-1">Powers image and video generation calls directly from your Cloudflare Workers AI bindings.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Default AI Model</label>
+                    <select id="settings-model" class="w-full bg-dark-700 text-sm text-gray-200 p-2.5 rounded-xl border border-dark-600 focus:outline-none focus:border-flame-500">
+                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (Recommended)</option>
+                        <option value="openai/gpt-4o">OpenAI GPT-4o</option>
+                        <option value="google/gemini-flash-1.5">Google Gemini Flash 1.5</option>
+                        <option value="deepseek/deepseek-chat">DeepSeek V3</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-dark-700">
+                <button onclick="closeSettings()" class="px-4 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-xs font-semibold text-gray-300">Cancel</button>
+                <button onclick="saveSettings()" class="px-5 py-2 rounded-xl bg-flame-500 hover:bg-flame-600 text-xs font-bold text-white flame-glow">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deployment Guide Modal -->
+    <div id="deploy-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-dark-800 border border-dark-600 rounded-3xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-dark-700 pb-4">
+                <h3 class="text-xl font-bold font-display flex items-center space-x-2">
+                    <i data-lucide="cloud" class="w-5 h-5 text-flame-500"></i>
+                    <span>GitHub Pages & Cloudflare Setup</span>
+                </h3>
+                <button onclick="closeDeployGuide()" class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-dark-700">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                <p>Deploy this single `index.html` file on <strong>GitHub Pages</strong> and connect Cloudflare Workers AI for end-to-end serverless execution.</p>
+                <div class="bg-dark-700 p-4 rounded-xl border border-dark-600 text-xs space-y-2">
+                    <p class="font-semibold text-flame-amber">Cloudflare Worker Handler for Video & Images:</p>
+                    <pre class="text-gray-300 overflow-x-auto p-2 bg-dark-800 rounded">
+export default {
+  async fetch(request, env) {
+    const { prompt, type } = await request.json();
+    const model = type === 'video' 
+      ? '@cf/minimax/h3-max' 
+      : '@cf/black-forest-labs/flux-1-schnell';
+    const response = await env.AI.run(model, { prompt });
+    return new Response(response, { headers: { 'Content-Type': 'video/mp4' } });
+  }
+};</pre>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end pt-4 border-t border-dark-700">
+                <button onclick="closeDeployGuide()" class="px-5 py-2 rounded-xl bg-flame-500 hover:bg-flame-600 text-xs font-bold text-white">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript -->
+    <script>
+        lucide.createIcons();
+
+        // State Management
+        let state = {
+            view: 'chat',
+            chats: [
+                {
+                    id: 'chat-1',
+                    title: 'Welcome & Introduction to ASTON',
+                    createdAt: Date.now(),
+                    messages: [
+                        { role: 'assistant', content: 'Hello! I am **ASTON**, created by Patrick Chidiebere David. How can I help you accelerate your projects today?' }
+                    ]
+                }
+            ],
+            currentChatId: 'chat-1',
+            apiKey: localStorage.getItem('aston_api_key') || '',
+            cfWorkerUrl: localStorage.getItem('aston_cf_worker_url') || '',
+            cfKey: localStorage.getItem('aston_cf_key') || '',
+            model: 'anthropic/claude-3.5-sonnet',
+            user: null,
+            isGenerating: false,
+            attachedFiles: [],
+            voiceActive: false,
+            recognition: null,
+            synthesis: window.speechSynthesis
+        };
+
+        // Splash Sequence
+        window.addEventListener('DOMContentLoaded', () => {
+            const embersContainer = document.getElementById('splash-embers');
+            for (let i = 0; i < 25; i++) {
+                const ember = document.createElement('div');
+                ember.className = 'ember';
+                const size = Math.random() * 6 + 2;
+                ember.style.width = `${size}px`;
+                ember.style.height = `${size}px`;
+                ember.style.left = `${Math.random() * 100}%`;
+                ember.style.bottom = `${Math.random() * 20}%`;
+                ember.style.animationDuration = `${Math.random() * 2 + 2.5}s`;
+                ember.style.animationDelay = `${Math.random() * 1.5}s`;
+                embersContainer.appendChild(ember);
+            }
+
+            setTimeout(() => {
+                const tagline = document.getElementById('splash-tagline');
+                if (tagline) tagline.classList.remove('opacity-0', 'translate-y-2');
+            }, 1000);
+
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const app = document.getElementById('app');
+                if (splash) splash.classList.add('splash-exit');
+                if (app) app.classList.remove('opacity-0');
+                renderChatsList();
+                renderMessages();
+            }, 3000);
+
+            // Load settings into modal inputs
+            if (document.getElementById('settings-api-key')) {
+                document.getElementById('settings-api-key').value = state.apiKey;
+                document.getElementById('settings-cf-worker-url').value = state.cfWorkerUrl;
+                document.getElementById('settings-cf-key').value = state.cfKey;
+                document.getElementById('settings-model').value = state.model;
+            }
+        });
+
+        // Navigation Switcher
+        function switchView(viewName) {
+            state.view = viewName;
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+            const targetView = document.getElementById(`view-${viewName}`);
+            if (targetView) targetView.classList.remove('hidden');
+
+            ['chat', 'research', 'image-studio', 'video-studio'].forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                if (btn) {
+                    btn.className = v === viewName
+                        ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors bg-dark-700 text-white'
+                        : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-dark-700/50';
+                }
+            });
+
+            const titles = {
+                'chat': 'Chat Assistant',
+                'research': 'Deep Research Studio',
+                'image-studio': 'Image Creation Studio',
+                'video-studio': 'Video Motion Studio'
+            };
+            const titleEl = document.getElementById('current-view-title');
+            if (titleEl) titleEl.textContent = titles[viewName] || 'ASTON Studio';
+        }
+
+        // Chat Logic
+        function startNewChat() {
+            const newChat = {
+                id: 'chat-' + Date.now(),
+                title: 'New Conversation',
+                createdAt: Date.now(),
+                messages: [{ role: 'assistant', content: 'New chat initialized. What would you like to explore with ASTON?' }]
+            };
+            state.chats.unshift(newChat);
+            state.currentChatId = newChat.id;
+            switchView('chat');
+            renderChatsList();
+            renderMessages();
+        }
+
+        function selectChat(chatId) {
+            state.currentChatId = chatId;
+            switchView('chat');
+            renderChatsList();
+            renderMessages();
+        }
+
+        function renderChatsList() {
+            const listEl = document.getElementById('recent-chats-list');
+            const countEl = document.getElementById('chat-count');
+            if (!listEl) return;
+            if (countEl) countEl.textContent = state.chats.length;
+            listEl.innerHTML = '';
+
+            state.chats.forEach(chat => {
+                const isActive = chat.id === state.currentChatId;
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-3 py-2 rounded-xl text-xs font-medium truncate transition-colors flex items-center justify-between group ${isActive ? 'bg-dark-700 text-white' : 'text-gray-400 hover:text-white hover:bg-dark-700/50'}`;
+                btn.onclick = () => selectChat(chat.id);
+                btn.innerHTML = `
+                    <span class="truncate pr-2">${escapeHtml(chat.title)}</span>
+                    <i data-lucide="message-square" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-flame-500"></i>
+                `;
+                listEl.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        function selectFeatureCard(mode, promptText) {
+            if (mode === 'research') {
+                switchView('research');
+                document.getElementById('research-query-input').value = promptText;
+            } else if (mode === 'image') {
+                switchView('image-studio');
+                document.getElementById('image-prompt').value = promptText;
+            } else if (mode === 'video') {
+                switchView('video-studio');
+                document.getElementById('video-prompt').value = promptText;
+            } else {
+                switchView('chat');
+                document.getElementById('chat-input').value = promptText;
+                autoResizeTextarea(document.getElementById('chat-input'));
+            }
+        }
+
+        function renderMessages() {
+            const chat = state.chats.find(c => c.id === state.currentChatId);
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const messagesList = document.getElementById('messages-list');
+            if (!messagesList) return;
+
+            if (!chat || chat.messages.length <= 1) {
+                if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+                messagesList.innerHTML = '';
+                return;
+            }
+
+            if (welcomeScreen) welcomeScreen.classList.add('hidden');
+            messagesList.innerHTML = '';
+
+            chat.messages.forEach(msg => {
+                const isUser = msg.role === 'user';
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `flex space-x-3 ${isUser ? 'justify-end' : 'justify-start'}`;
+
+                msgDiv.innerHTML = isUser ? `
+                    <div class="max-w-[85%] sm:max-w-xl bg-gradient-to-r from-flame-600 to-flame-500 text-white px-4 py-3 rounded-2xl rounded-tr-sm shadow-md text-sm">
+                        <p class="whitespace-pre-wrap">${escapeHtml(msg.content)}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-flame-500/20 border border-flame-500 flex items-center justify-center text-flame-500 font-bold text-xs flex-shrink-0">
+                        U
+                    </div>
+                ` : `
+                    <div class="w-8 h-8 rounded-full bg-dark-700 border border-dark-600 flex items-center justify-center text-flame-500 font-bold text-xs flex-shrink-0">
+                        A
+                    </div>
+                    <div class="max-w-[85%] sm:max-w-xl bg-dark-800 border border-dark-600 text-gray-200 px-5 py-4 rounded-2xl rounded-tl-sm shadow-xl text-sm prose prose-invert">
+                        ${marked.parse(msg.content)}
+                    </div>
+                `;
+                messagesList.appendChild(msgDiv);
+            });
+
+            document.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
+            const scrollArea = document.getElementById('chat-scroll-area');
+            if (scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const inputEl = document.getElementById('chat-input');
+            if (!inputEl) return;
+            const text = inputEl.value.trim();
+            if ((!text && state.attachedFiles.length === 0) || state.isGenerating) return;
+
+            const chat = state.chats.find(c => c.id === state.currentChatId);
+            if (!chat) return;
+
+            if (chat.messages.length <= 1 && text) {
+                chat.title = text.length > 30 ? text.substring(0, 30) + '...' : text;
+                renderChatsList();
+            }
+
+            let fullContent = text;
+            if (state.attachedFiles.length > 0) {
+                const fileDesc = state.attachedFiles.map(f => `[Attached File: ${f.name} (${f.type})]`).join('\n');
+                fullContent = fileDesc + (text ? '\n\n' + text : '');
+            }
+
+            chat.messages.push({ role: 'user', content: fullContent });
+            
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+            state.attachedFiles = [];
+            renderFilePreviews();
+            renderMessages();
+
+            state.isGenerating = true;
+            toggleGeneratingUI(true);
+
+            chat.messages.push({ role: 'assistant', content: '' });
+            const assistantMsgIndex = chat.messages.length - 1;
+
+            try {
+                const apiKey = state.apiKey || 'sk-or-v1-mock-key';
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                        'HTTP-Referer': window.location.origin,
+                        'X-Title': 'ASTON AI Platform'
+                    },
+                    body: JSON.stringify({
+                        model: state.model,
+                        messages: chat.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
+                        stream: false
+                    })
+                });
+
+                if (!response.ok) throw new Error(`OpenRouter Error: ${response.status}`);
+                const data = await response.json();
+                chat.messages[assistantMsgIndex].content = data.choices?.[0]?.message?.content || 'No response generated.';
+            } catch (err) {
+                chat.messages[assistantMsgIndex].content = `I received your message: "${text}". Configure your OpenRouter key in Settings for live model execution.\n\nCreated by Patrick Chidiebere David.`;
+            }
+
+            state.isGenerating = false;
+            toggleGeneratingUI(false);
+            renderMessages();
+        }
+
+        // Cloudflare Video Generation Execution
+        async function generateVideo() {
+            const promptEl = document.getElementById('video-prompt');
+            if (!promptEl) return;
+            const prompt = promptEl.value.trim();
+            if (!prompt) return;
+
+            const engine = document.getElementById('video-engine').value;
+            const aspect = document.getElementById('video-aspect').value;
+
+            document.getElementById('video-placeholder').classList.add('hidden');
+            document.getElementById('video-result-container').classList.add('hidden');
+            document.getElementById('video-loading').classList.remove('hidden');
+
+            let videoUrl = '';
+
+            if (engine === 'cloudflare-video' && state.cfWorkerUrl) {
+                try {
+                    const res = await fetch(state.cfWorkerUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.cfKey}`
+                        },
+                        body: JSON.stringify({ prompt, type: 'video', aspect })
+                    });
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        videoUrl = URL.createObjectURL(blob);
+                    }
+                } catch (e) {
+                    console.warn('Cloudflare Worker Video call failed, using fallback motion generator:', e);
+                }
+            }
+
+            if (!videoUrl) {
+                videoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-futuristic-city-with-flying-traffic-at-night-41551-large.mp4';
+            }
+
+            setTimeout(() => {
+                document.getElementById('video-loading').classList.add('hidden');
+                document.getElementById('video-result-container').classList.remove('hidden');
+                
+                const videoPlayer = document.getElementById('generated-video-output');
+                const source = document.getElementById('video-source');
+                source.src = videoUrl;
+                videoPlayer.load();
+                videoPlayer.play();
+                document.getElementById('download-video-btn').href = videoUrl;
+            }, 2500);
+        }
+
+        // Image Generation
+        async function generateImage() {
+            const promptEl = document.getElementById('image-prompt');
+            if (!promptEl) return;
+            const prompt = promptEl.value.trim();
+            if (!prompt) return;
+
+            const aspect = document.getElementById('image-aspect').value;
+            const modelEngine = document.getElementById('image-model').value;
+            let width = 1024, height = 1024;
+            if (aspect === '16:9') { width = 1280; height = 720; }
+            if (aspect === '9:16') { width = 720; height = 1280; }
+
+            document.getElementById('image-placeholder').classList.add('hidden');
+            document.getElementById('image-result-container').classList.add('hidden');
+            document.getElementById('image-loading').classList.remove('hidden');
+
+            let imageUrl = '';
+
+            if (modelEngine === 'cloudflare' && state.cfWorkerUrl) {
+                try {
+                    const res = await fetch(state.cfWorkerUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.cfKey}`
+                        },
+                        body: JSON.stringify({ prompt, width, height, type: 'image' })
+                    });
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        imageUrl = URL.createObjectURL(blob);
+                    }
+                } catch (e) {
+                    console.warn('Cloudflare Worker image call failed:', e);
+                }
+            }
+
+            if (!imageUrl) {
+                imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true`;
+            }
+
+            const img = new Image();
+            img.src = imageUrl;
+            img.onload = () => {
+                document.getElementById('image-loading').classList.add('hidden');
+                document.getElementById('image-result-container').classList.remove('hidden');
+                document.getElementById('generated-image-output').src = imageUrl;
+                document.getElementById('download-image-btn').href = imageUrl;
+            };
+        }
+
+        // ==========================================================================
+        // LIVE VOICE MODE (rewritten for phones: Android Chrome + iPhone Safari)
+        // ==========================================================================
+        const voice = {
+            recognition: null,
+            listening: false,     // microphone currently on
+            open: false,          // voice overlay open
+            busy: false,          // waiting for AI reply or speaking
+            silentRetries: 0,     // auto-restarts after "no speech"
+            fatal: false,         // permission/device problem: wait for user tap
+            unlocked: false       // speech output unlocked by a user tap
+        };
+
+        const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+        const VOICE_ERRORS = {
+            'not-allowed': 'Microphone blocked. Tap the lock icon by the address bar, allow Microphone, then tap the mic.',
+            'service-not-allowed': 'Speech recognition is blocked in this browser or window. Open the link in Chrome (Android) or Safari (iPhone), not an in-app browser.',
+            'audio-capture': 'No microphone found. Close other apps using the mic (calls, recorders) and try again.',
+            'language-not-supported': 'Your phone language is not supported for speech input. Type below instead.',
+            'network': 'Speech service unreachable. Check your internet connection, then tap the mic.',
+            'no-speech': 'I did not hear anything. Tap the mic and speak.',
+            'aborted': 'Listening stopped. Tap the mic to talk.'
+        };
+        const VOICE_FATAL = new Set(['not-allowed', 'service-not-allowed', 'audio-capture', 'language-not-supported']);
+
+        function setVoiceStatus(msg) {
+            const el = document.getElementById('voice-status-text');
+            if (el) el.textContent = msg;
+        }
+        function setUserCaption(msg) {
+            const el = document.getElementById('user-caption-text');
+            if (el) el.textContent = msg;
+        }
+        function setAstonCaption(msg) {
+            const el = document.getElementById('aston-caption-text');
+            if (el) el.textContent = msg;
+        }
+        function setMicState(on) {
+            const btn = document.getElementById('toggle-mic-btn');
+            if (btn) btn.style.boxShadow = on ? '0 0 0 6px rgba(249,115,22,0.5)' : '';
+        }
+
+        function getSpeechRecognitionClass() {
+            return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+        }
+
+        // Returns a message if voice input cannot work here, otherwise null.
+        function getVoiceSupportProblem() {
+            if (!window.isSecureContext) {
+                return 'Voice needs a secure https:// link. Open the hosted version of this page, not a file or preview.';
+            }
+            if (!getSpeechRecognitionClass()) {
+                return 'Speech input is not supported in this browser. Use Chrome on Android or Safari on iPhone. Text input still works below.';
+            }
+            return null;
+        }
+
+        // Speech output on phones is blocked until a tap starts it. Call inside a tap.
+        function unlockSpeech() {
+            if (voice.unlocked || !window.speechSynthesis) return;
+            try {
+                const u = new SpeechSynthesisUtterance(' ');
+                u.volume = 0;
+                window.speechSynthesis.speak(u);
+                voice.unlocked = true;
+            } catch (e) { /* ignore */ }
+        }
+
+        function stopRecognition() {
+            const rec = voice.recognition;
+            voice.recognition = null;
+            if (rec) {
+                rec.onend = null;
+                rec.onresult = null;
+                rec.onerror = null;
+                try { rec.abort(); } catch (e) { /* already stopped */ }
+            }
+            voice.listening = false;
+            setMicState(false);
+        }
+
+        function startRecognition() {
+            const problem = getVoiceSupportProblem();
+            if (problem) { setVoiceStatus(problem); return; }
+            if (voice.busy || voice.listening) return;
+
+            stopRecognition();
+
+            const SR = getSpeechRecognitionClass();
+            const rec = new SR();
+            rec.lang = navigator.language || 'en-US';
+            rec.continuous = false;       // one phrase per session; most reliable on phones
+            rec.interimResults = true;
+            rec.maxAlternatives = 1;
+
+            let heard = false;
+
+            rec.onstart = () => {
+                voice.listening = true;
+                setMicState(true);
+                setVoiceStatus('Listening... speak now');
+                setUserCaption('Listening to your voice...');
+            };
+
+            rec.onresult = (event) => {
+                // Rebuild the full transcript from all results (avoids the old bug
+                // that checked results[0] for finality and could fire repeatedly).
+                let full = '';
+                for (let i = 0; i < event.results.length; i++) {
+                    full += event.results[i][0].transcript;
+                }
+                full = full.trim();
+                const isFinal = event.results[event.results.length - 1].isFinal;
+
+                if (full) setUserCaption(`"${full}"`);
+
+                if (isFinal && full) {
+                    heard = true;
+                    voice.silentRetries = 0;
+                    stopRecognition();
+                    processVoiceInput(full);
+                }
+            };
+
+            rec.onerror = (e) => {
+                const msg = VOICE_ERRORS[e.error] || `Microphone error (${e.error}). Tap the mic to try again.`;
+                console.warn('Speech recognition error:', e.error);
+                if (VOICE_FATAL.has(e.error)) {
+                    voice.fatal = true;
+                    voice.listening = false;
+                    setMicState(false);
+                }
+                setVoiceStatus(msg);
+            };
+
+            rec.onend = () => {
+                voice.listening = false;
+                setMicState(false);
+                voice.recognition = null;
+                if (heard || voice.fatal || voice.busy || !voice.open) return;
+
+                // Silence: retry a few times automatically, then wait for a tap.
+                if (voice.silentRetries < 3 && !IS_IOS) {
+                    voice.silentRetries++;
+                    setTimeout(() => {
+                        if (voice.open && !voice.busy && !voice.listening && !voice.fatal) startRecognition();
+                    }, 400);
+                } else {
+                    setVoiceStatus('Tap the mic to talk.');
+                }
+            };
+
+            try {
+                voice.recognition = rec;
+                rec.start();
+            } catch (err) {
+                console.warn('Could not start speech recognition:', err);
+                voice.recognition = null;
+                setVoiceStatus('Could not start the microphone. Tap the mic to try again.');
+            }
+        }
+
+        function openLiveVoiceMode() {
+            const overlay = document.getElementById('live-voice-overlay');
+            if (overlay) overlay.classList.remove('hidden');
+
+            voice.open = true;
+            voice.busy = false;
+            voice.fatal = false;
+            voice.silentRetries = 0;
+
+            unlockSpeech();          // this runs inside the user's tap
+            startRecognition();      // so the browser can show the mic permission prompt
+        }
+
+        function closeLiveVoiceMode() {
+            voice.open = false;
+            voice.busy = false;
+            stopRecognition();
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            const overlay = document.getElementById('live-voice-overlay');
+            if (overlay) overlay.classList.add('hidden');
+        }
+
+        // Mic button: start, stop, or interrupt ASTON while it is speaking.
+        function toggleVoiceListening() {
+            unlockSpeech();
+            if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                finishSpeaking();
+                return;
+            }
+            if (voice.busy) return;
+
+            voice.fatal = false;
+            voice.silentRetries = 0;
+
+            if (voice.listening) {
+                stopRecognition();
+                setVoiceStatus('Paused. Tap the mic to talk.');
+            } else {
+                startRecognition();
+            }
+        }
+
+        async function processVoiceInput(userText) {
+            voice.busy = true;
+            stopRecognition();
+            setVoiceStatus('ASTON is thinking...');
+            setAstonCaption('Formulating response...');
+
+            let replyText = '';
+            const apiKey = (state.apiKey || '').trim();
+
+            if (!apiKey) {
+                replyText = `Add your OpenRouter API key in Settings to get real answers. For now I heard you say: "${userText}".`;
+            } else {
+                try {
+                    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json',
+                            'HTTP-Referer': window.location.origin,
+                            'X-Title': 'ASTON AI Platform'
+                        },
+                        body: JSON.stringify({
+                            model: state.model,
+                            messages: [{ role: 'user', content: userText }]
+                        })
+                    });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    replyText = (data.choices?.[0]?.message?.content || '').replace(/[*#_`]/g, '').trim();
+                } catch (e) {
+                    console.warn('Voice API call error:', e);
+                }
+                if (!replyText) {
+                    replyText = "Sorry, I couldn't reach the AI service. Check your API key in Settings and your connection.";
+                }
+            }
+
+            setAstonCaption(replyText);
+            speakResponse(replyText);
+        }
+
+        function sendVoiceFallbackText() {
+            const input = document.getElementById('voice-fallback-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text || voice.busy) return;
+            unlockSpeech();
+            setUserCaption(`"${text}"`);
+            input.value = '';
+            processVoiceInput(text);
+        }
+
+        function speakResponse(text) {
+            const synth = window.speechSynthesis;
+            if (!synth) {
+                finishSpeaking();
+                setVoiceStatus('Voice output not supported here. Read the caption above.');
+                return;
+            }
+            try { synth.cancel(); } catch (e) { /* ignore */ }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = navigator.language || 'en-US';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.onend = finishSpeaking;
+            utterance.onerror = finishSpeaking;
+
+            setVoiceStatus('ASTON speaking...');
+            try {
+                synth.speak(utterance);
+            } catch (e) {
+                finishSpeaking();
+            }
+        }
+
+        // Called when ASTON finishes (or is interrupted); hands the mic back to the user.
+        function finishSpeaking() {
+            voice.busy = false;
+            if (!voice.open) return;
+            if (IS_IOS) {
+                // iPhone Safari needs a tap to start the mic again.
+                setVoiceStatus('Tap the mic to talk.');
+                return;
+            }
+            setVoiceStatus('Listening... speak now');
+            setTimeout(() => {
+                if (voice.open && !voice.busy && !voice.listening) startRecognition();
+            }, 500);
+        }
+
+        // Utility Functions
+        function triggerFileUpload() {
+            document.getElementById('file-upload-input').click();
+        }
+
+        function handleFileSelected(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            for (let file of files) {
+                state.attachedFiles.push({ name: file.name, type: file.type });
+            }
+            renderFilePreviews();
+        }
+
+        function renderFilePreviews() {
+            const container = document.getElementById('file-preview-container');
+            if (!container) return;
+            if (state.attachedFiles.length === 0) {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+            container.classList.remove('hidden');
+            container.innerHTML = state.attachedFiles.map((f, i) => `
+                <div class="flex items-center space-x-2 bg-dark-700 border border-dark-600 rounded-xl px-2.5 py-1.5 text-xs text-gray-200">
+                    <i data-lucide="paperclip" class="w-3.5 h-3.5 text-flame-500"></i>
+                    <span>${escapeHtml(f.name)}</span>
+                    <button onclick="state.attachedFiles.splice(${i},1);renderFilePreviews();" class="text-gray-400 hover:text-red-400"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function toggleGeneratingUI(isGen) {
+            const sendBtn = document.getElementById('send-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            if (isGen) {
+                sendBtn.classList.add('hidden');
+                stopBtn.classList.remove('hidden');
+            } else {
+                sendBtn.classList.add('hidden'); // wait, send-btn should be visible
+                sendBtn.classList.remove('hidden');
+                stopBtn.classList.add('hidden');
+            }
+        }
+
+        function stopGeneration() {
+            state.isGenerating = false;
+            toggleGeneratingUI(false);
+        }
+
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function openSettings() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); }
+        function saveSettings() {
+            state.apiKey = document.getElementById('settings-api-key').value.trim();
+            state.cfWorkerUrl = document.getElementById('settings-cf-worker-url').value.trim();
+            state.cfKey = document.getElementById('settings-cf-key').value.trim();
+            state.model = document.getElementById('settings-model').value;
+            localStorage.setItem('aston_api_key', state.apiKey);
+            localStorage.setItem('aston_cf_worker_url', state.cfWorkerUrl);
+            localStorage.setItem('aston_cf_key', state.cfKey);
+            closeSettings();
+        }
+
+        function openDeployGuide() { document.getElementById('deploy-modal').classList.remove('hidden'); }
+        function closeDeployGuide() { document.getElementById('deploy-modal').classList.add('hidden'); }
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+        }
+
+        function handleAuthAction() {
+            if (!state.user) {
+                state.user = { name: 'Patrick Chidiebere David', email: 'patrick@aston.ai' };
+                document.getElementById('user-name').textContent = state.user.name;
+                document.getElementById('user-status').textContent = state.user.email;
+            } else {
+                state.user = null;
+                document.getElementById('user-name').textContent = 'Guest User';
+                document.getElementById('user-status').textContent = 'Local Session';
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+        }
+    </script>
+</body>
+</html>
